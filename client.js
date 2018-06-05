@@ -42,6 +42,12 @@ class YelpGQLClient {
     return fetchGQLResponse(query);
   }
 
+  sleeper(ms) {
+    return function(x) {
+      return new Promise(resolve => setTimeout(() => resolve(x), ms));
+    };
+  }
+
 
   async findNBusinessesLimited(term, location, n) {
     let requests = [];
@@ -63,7 +69,7 @@ class YelpGQLClient {
 
     for (i; i < pages - 1; i++) {
       offset = i * 50;
-      req = this.makeLimitedSearchQuery(term, location, limit, offset);
+      req = this.makeLimitedSearchQuery(term, location, limit, offset).then(sleeper(500));
       requests.push(req)
     }
 
